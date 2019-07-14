@@ -4,13 +4,12 @@ var bcrypt = require('bcrypt');
 const saltRounds = 12;
 module.exports = app => {
     app.post('/signin', async (req,res) => {
-        console.log(req.body, "req for signin")
-        const {name, email, phone, passoword} = req.body;
+        const {name, email, phone, password} = req.body;
         const existingUser = await User.find({email});
         if(existingUser.length) {
             return res.send({msg:"User already exists"});
         }
-        bcrypt.hash(req.body.password, saltRounds, async function (err,   hash) {
+        bcrypt.hash(password, saltRounds, async function (err,   hash) {
             const user = new User({
                 name,
                 email,
