@@ -4,6 +4,20 @@ const bodyParser = require("body-parser");
 const app = express();
 require('./models/flightModels');
 require('./models/userModel');
+
+let channel = null;
+//queue name
+const QUEUE = 'indigoqueue';
+
+function init() {
+  return require('amqplib').connect('amqp://localhost')
+      .then(conn => conn.createChannel())
+      .then(ch => {
+          channel = ch;
+          channel.assertQueue(QUEUE);
+      });
+}
+
 app.use(bodyParser.json());
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -12,7 +26,6 @@ app.use(function(req, res, next) {
     "Access-Control-Allow-Headers",
     "Authorization,Accept,Content-Type"
   );
-
   next();
 });
 
@@ -25,4 +38,6 @@ require('./routes/userRoutes')(app);
 
 const port = process.env.PORT || 5000;
 
-app.listen(port, () => console.log(`listening at ${port}`));
+init()
+    .then(() => app.listen(port, () => console.log('Example app listening on port 5000!')))
+    .catch(err=>console.error(err));

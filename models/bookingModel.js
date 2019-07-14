@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const flightSchema = new Schema({
+const bookingSchema = new Schema({
     operator: String,
     number: String,
-    seats: Number,
     date: Date,
     departure: Date,
     arrival: Date,
@@ -14,4 +13,4 @@ const flightSchema = new Schema({
     duration: Number,
 });
 
-mongoose.model('flights', flightSchema);
+module.exports =  bookingSchema;
